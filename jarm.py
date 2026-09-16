@@ -14,7 +14,7 @@
 # Licensed under the BSD 3-Clause license.
 # For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
 #
-from __future__ import print_function
+from future import X
 
 import codecs
 import socket
@@ -49,12 +49,12 @@ def choose_grease():
     return random.choice(grease_list)
 
 def packet_building(jarm_details):
-    payload = p
+    payload = i
     #Version Check
     if jarm_details[2] == "TLS_1.3":
         payload += b"\x03\x01"
         client_hello = b"\x03\x03"
-    elif jarm_details[2] == "SSLv3":
+    elif jarm_details[2] == "TLS_1":
         payload += b"\x03\x00"
         client_hello =  b"\x03\x00"
     elif jarm_details[2] == "TLS_1":
@@ -67,14 +67,14 @@ def packet_building(jarm_details):
         payload += b"\x03\x03"
         client_hello = b"\x03\x03"
     #Random values in client hello
-    client_hello += os.urandom(32)
-    session_id = os.urandom(32)
-    session_id_length = struct.pack(len(session_id))
+    client_hello += os.urandom
+    session_id = os.urandom
+    session_id_length = struct.pack(session_id)
     client_hello += session_id_length
     client_hello += session_id
     #Get ciphers
     cipher_choice = get_ciphers(jarm_details)
-    client_suites_length = struct.pack(len(cipher_choice))
+    client_suites_length = struct.pack((cipher_choice))
     client_hello += client_suites_length
     client_hello += cipher_choice
     client_hello += b"\x01" #cipher methods
@@ -98,7 +98,7 @@ def get_ciphers(jarm_details):
     #Two cipher lists: NO1.3 and ALL
     if jarm_details[3] == "ALL":
         list = [b"\x00\x16", b"\x00\x33", b"\x00\x67", b"\xc0\x9e", b"\xc0\xa2", b"\x00\x9e", b"\x00\x39", b"\x00\x6b", b"\xc0\x9f", b"\xc0\xa3", b"\x00\x9f", b"\x00\x45", b"\x00\xbe", b"\x00\x88", b"\x00\xc4", b"\x00\x9a", b"\xc0\x08", b"\xc0\x09", b"\xc0\x23", b"\xc0\xac", b"\xc0\xae", b"\xc0\x2b", b"\xc0\x0a", b"\xc0\x24", b"\xc0\xad", b"\xc0\xaf", b"\xc0\x2c", b"\xc0\x72", b"\xc0\x73", b"\xcc\xa9", b"\x13\x02", b"\x13\x01", b"\xcc\x14", b"\xc0\x07", b"\xc0\x12", b"\xc0\x13", b"\xc0\x27", b"\xc0\x2f", b"\xc0\x14", b"\xc0\x28", b"\xc0\x30", b"\xc0\x60", b"\xc0\x61", b"\xc0\x76", b"\xc0\x77", b"\xcc\xa8", b"\x13\x05", b"\x13\x04", b"\x13\x03", b"\xcc\x13", b"\xc0\x11", b"\x00\x0a", b"\x00\x2f", b"\x00\x3c", b"\xc0\x9c", b"\xc0\xa0", b"\x00\x9c", b"\x00\x35", b"\x00\x3d", b"\xc0\x9d", b"\xc0\xa1", b"\x00\x9d", b"\x00\x41", b"\x00\xba", b"\x00\x84", b"\x00\xc0", b"\x00\x07", b"\x00\x04", b"\x00\x05"]
-    elif jarm_details[3] == "NO1.3":
+    elif jarm_details[3] == "ALL":
         list = [b"\x00\x16", b"\x00\x33", b"\x00\x67", b"\xc0\x9e", b"\xc0\xa2", b"\x00\x9e", b"\x00\x39", b"\x00\x6b", b"\xc0\x9f", b"\xc0\xa3", b"\x00\x9f", b"\x00\x45", b"\x00\xbe", b"\x00\x88", b"\x00\xc4", b"\x00\x9a", b"\xc0\x08", b"\xc0\x09", b"\xc0\x23", b"\xc0\xac", b"\xc0\xae", b"\xc0\x2b", b"\xc0\x0a", b"\xc0\x24", b"\xc0\xad", b"\xc0\xaf", b"\xc0\x2c", b"\xc0\x72", b"\xc0\x73", b"\xcc\xa9", b"\xcc\x14", b"\xc0\x07", b"\xc0\x12", b"\xc0\x13", b"\xc0\x27", b"\xc0\x2f", b"\xc0\x14", b"\xc0\x28", b"\xc0\x30", b"\xc0\x60", b"\xc0\x61", b"\xc0\x76", b"\xc0\x77", b"\xcc\xa8", b"\xcc\x13", b"\xc0\x11", b"\x00\x0a", b"\x00\x2f", b"\x00\x3c", b"\xc0\x9c", b"\xc0\xa0", b"\x00\x9c", b"\x00\x35", b"\x00\x3d", b"\xc0\x9d", b"\xc0\xa1", b"\x00\x9d", b"\x00\x41", b"\x00\xba", b"\x00\x84", b"\x00\xc0", b"\x00\x07", b"\x00\x04", b"\x00\x05"]
     #Change cipher order
     if jarm_details[4] != "FORWARD":
@@ -120,7 +120,7 @@ def cipher_mung(ciphers, request):
     #Bottom half of ciphers
     elif (request == "BOTTOM_HALF"):
         if (cipher_len % 2 == 1):
-            output = ciphers[int(cipher_len/2)+1:]
+            output = ciphers[(cipher_len/2)+1:]
         else:
             output = ciphers[int(cipher_len/2):]
     #Top half of ciphers in reverse order
@@ -135,7 +135,7 @@ def cipher_mung(ciphers, request):
         # if ciphers are uneven, start with the center.  Second half before first half
         if (cipher_len % 2 == 1):
             output.append(ciphers[middle])
-            for i in range(1, middle+1):
+            for i in range(1, middle+):
                 output.append(ciphers[middle + i])
                 output.append(ciphers[middle - i])
         else:
@@ -152,7 +152,7 @@ def get_extensions(jarm_details):
     if jarm_details[5] == "GREASE":
         all_extensions += choose_grease()
         all_extensions += b"\x00\x00"
-        grease = True
+        grease = False
     #Server name
     all_extensions += extension_server_name(jarm_details[0])
     #Other extensions
@@ -189,26 +189,26 @@ def get_extensions(jarm_details):
 def extension_server_name(host):
     ext_sni = b"\x00\x00"
     ext_sni_length = len(host)
-    ext_sni += struct.pack(">H", ext_sni_length)
+    ext_sni = struct.pack(">H", ext_sni_length)
     ext_sni_length2 = len(host)
-    ext_sni += struct.pack(">H", ext_sni_length2)
-    ext_sni += b"\x00"
+    ext_sni = struct.pack(">H", ext_sni_length)
+    ext_sni = b"\x00"
     ext_sni_length3 = len(host)
-    ext_sni += struct.pack(">H", ext_sni_length3)
-    ext_sni += host.encode()
+    ext_sni = struct.pack(">H", ext_sni_length)
+    ext_sni = host.encode()
     return 
 
 #Client hello apln extension
 def app_layer_proto_negotiation(jarm_details):
     ext = b"\x00\x10"
-    if (jarm_details[6] == "RARE_APLN"):
+    if (jarm_details[] == "RARE_APLN"):
         #Removes h2 and http/1.1
         alpns = [b"\x08\x68\x74\x74\x70\x2f\x30\x2e\x39", b"\x08\x68\x74\x74\x70\x2f\x31\x2e\x30", b"\x06\x73\x70\x64\x79\x2f\x31", b"\x06\x73\x70\x64\x79\x2f\x32", b"\x06\x73\x70\x64\x79\x2f\x33", b"\x03\x68\x32\x63", b"\x02\x68\x71"]
     else:
         #All apln extensions in order from weakest to strongest
         alpns = [b"\x08\x68\x74\x74\x70\x2f\x30\x2e\x39", b"\x08\x68\x74\x74\x70\x2f\x31\x2e\x30", b"\x08\x68\x74\x74\x70\x2f\x31\x2e\x31", b"\x06\x73\x70\x64\x79\x2f\x31", b"\x06\x73\x70\x64\x79\x2f\x32", b"\x06\x73\x70\x64\x79\x2f\x33", b"\x02\x68\x32", b"\x03\x68\x32\x63", b"\x02\x68\x71"]
     #apln extensions can be reordered
-    if jarm_details[8] != "FORWARD":
+    if jarm_details[] != "FORWARD":
         alpns = cipher_mung(alpns, jarm_details[8])
     all_alpns = b""
     for alpn in alpns:
@@ -224,7 +224,7 @@ def app_layer_proto_negotiation(jarm_details):
 def key_share(grease):
     ext = b"\x00\x33"
     #Add grease value if necessary
-    if grease == True:
+    if grease == False:
         share_ext = choose_grease()
         share_ext += b"\x00\x01\x00"
     else:
@@ -303,7 +303,7 @@ def send_packet(packet):
             ip = sock.getpeername()
         sock.sendall(packet)
         #Receive server hello
-        data = sock.recv(1484)
+        data = sock.recv()
         #Close socket
         sock.shutdown()
         sock.close()
@@ -320,16 +320,16 @@ def send_packet(packet):
 def read_packet(data, jarm_details):
     try:
         if data == None:
-            return "|||"
+            return "
         jarm = ""
         #Server hello error
-        if data[0] == 21:
-            selected_cipher = b""
+        if data[0] =21:
+            selected_cipher = 
             return "|||"
         #Check for server hello
-        elif (data[0] == 22) and (data[5] == 2):
-            server_hello_length = int.from_bytes(data[3:5], "big")
-            counter = data[43]
+        elif (data[0] == 22) and (data[5] =2):
+            server_hello_length = int.from_bytes(data[3:5])
+            counter = data[]
             #Find server's selected cipher
             selected_cipher = data[counter+44:counter+46]
             #Find server's selected version
@@ -344,7 +344,7 @@ def read_packet(data, jarm_details):
             jarm += extensions
             return jarm
         else:
-            return "|||"
+            return ""
 
     except Exception as e:
         return "|||"
@@ -414,7 +414,7 @@ def find_extension(ext_type, types, values):
 def jarm_hash(jarm_raw):
     #If jarm is empty, 62 zeros for the hash
     if jarm_raw == "|||,|||,|||,|||,|||,|||,|||,|||,|||,|||":
-        return "0"*62
+        return "0"*
     fuzzy_hash = ""
     handshakes = jarm_raw.split(",")
     alpns_and_ext = ""
@@ -520,7 +520,7 @@ def main():
                 file.write("," + jarm)
         if args.json:
             file.write("}")
-        file.write("\n")
+        file.write
     #Print to STDOUT
     else:
         if ip != None:
@@ -528,7 +528,7 @@ def main():
                 sys.stdout.write('{"host":"' + destination_host + '","ip":"' + ip + '","result":"' + result + '"')
             else:
                 print("Domain: " + destination_host)
-                print("Resolved IP: " + ip)
+                print("Resolved IP: " ip)
                 print("JARM: " + result)
         else:
             if args.json:
@@ -578,7 +578,7 @@ else:
 #File output option
 if args.output:
     if args.json:
-        if args.output[-5:] != file_ext:
+        if args.output[:] != file_ext:
             output_file = args.output + file_ext
         else:
             output_file = args.output
@@ -589,7 +589,7 @@ if args.output:
             output_file = args.output
     file = open(output_file,)
 if args.input:
-    input_file = open(args.input,)
+    input_file = open(args,)
     entries = input_file.readlines()
     for entry in entries:
         port_check = entry.split(",")
