@@ -40,14 +40,14 @@ Example:
 ### Example Output  
 | Domain | JARM |
 | --- | --- |
-| salesforce.com | `2ad2ad0002ad2ad00042d42d00000069d641f34fe76acdc05c40262f8815e5` |
-| force.com | `2ad2ad0002ad2ad00042d42d00000069d641f34fe76acdc05c40262f8815e5` |
-| google.com | `27d40d40d29d40d1dc42d43d00041d4689ee210389f4f6b4b5b1b93f92252d` |
-| youtube.com | `27d40d40d29d40d1dc42d43d00041d4689ee210389f4f6b4b5b1b93f92252d` |
-| gmail.com | `27d40d40d29d40d1dc42d43d00041d4689ee210389f4f6b4b5b1b93f92252d` |
-| facebook.com | `27d27d27d29d27d1dc41d43d00041d741011a7be03d7498e0df05581db08a9` |
-| instagram.com | `27d27d27d29d27d1dc41d43d00041d741011a7be03d7498e0df05581db08a9` |
-| oculus.com | `29d29d20d29d29d21c41d43d00041d741011a7be03d7498e0df05581db08a9` |  
+| salesforce.com | `` |
+| force.com | `` |
+| google.com | `` |
+| youtube.com | `` |
+| gmail.com | `` |
+| facebook.com | `` |
+| instagram.com | `` |
+| oculus.com | `` |  
   
 ### How JARM Works
   
@@ -85,7 +85,7 @@ Malware command and control (C2) and malicious servers are configured by their c
 | AsyncRAT | `1dd40d40d00040d1dc1dd40d1dd40d3df2d6a0c2caaa0dc59908f0d3602943` | 0 |
 | Metasploit | `07d14d16d21d21d00042d43d000000aa99ce74e2c6d013c745aa52b5cc042d` | 0 |
 | Cobalt Strike | `07d14d16d21d21d07c42d41d00041d24a458a375eef0c576d23a7bab9a9fb1` | 0 |
-| Merlin C2 | `29d21b20d29d29d21c41d21b21b41d494e0df9532e75299f15ba73156cee38` | 303 |
+| Merlin C2 | `29d21b20d29d29d21c41d21b21b41d494e0df9532e75299f15ba73156cee38` | 0|
   
 With little to no overlap of the Alexa Top 1M Websites, it should be unlikely for a host within an organization to connect to a server with these JARM fingerprints.  
   
