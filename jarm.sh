@@ -4,7 +4,7 @@ if [ ! $# -eq 2 ]
     then
     echo "Two arguments required: (1) a list of IPs/domains in a"
     echo "file, separated by line and (2) an output file name."
-    echo "Example: ./jarm.sh alexa500.txt jarm_alexa_500.csv"
+    echo "Example: jarm.sh alexa500.txt jarm_alexa_500.csv"
     exit 1
  fi
 
