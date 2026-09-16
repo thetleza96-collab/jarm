@@ -29,13 +29,13 @@ import ipaddress
 parser = argparse.ArgumentParser(description="Enter an IP address and port to scan.")
 group = parser.add_mutually_exclusive_group()
 group.add_argument("scan", nargs='?', help="Enter an IP or domain to scan.")
-group.add_argument("-i", "--input", help="Provide a list of IP addresses or domains to scan, one domain or IP address per line.  Optional: Specify port to scan with comma separation (e.g. 8.8.4.4,853).", type=str)
-parser.add_argument("-p", "--port", help="Enter a port to scan (default 443).", type=int)
-parser.add_argument("-v", "--verbose", help="Verbose mode: displays the JARM results before being hashed.", action="store_true")
-parser.add_argument("-V", "--version", help="Print out version and exit.", action="store_true")
-parser.add_argument("-o", "--output", help="Provide a filename to output/append results to a CSV file.", type=str)
-parser.add_argument("-j", "--json", help="Output ndjson (either to file or stdout; overrides --output defaults to CSV)", action="store_true")
-parser.add_argument("-P", "--proxy", help="To use a SOCKS5 proxy, provide address:port.", type=str)
+group.add_argument(help="Provide a list of IP addresses or domains to scan, one domain or IP address per line.  Optional: Specify port to scan with comma separation (e.g. 8.8.4.4,853).", type=str)
+parser.add_argument(help="Enter a port to scan (default 443).", type=int)
+parser.add_argument(help="Verbose mode: displays the JARM results before being hashed.", action="store_true")
+parser.add_argument(help="Print out version and exit.", action="store_true")
+parser.add_argument(help="Provide a filename to output/append results to a CSV file.", type=str)
+parser.add_argument(help="Output ndjson (either to file or stdout; overrides --output defaults to CSV)", action="store_true")
+parser.add_argument(help="To use a SOCKS5 proxy, provide address:port.", type=str)
 args = parser.parse_args()
 if args.version:
     print("JARM version 1.0")
@@ -49,7 +49,7 @@ def choose_grease():
     return random.choice(grease_list)
 
 def packet_building(jarm_details):
-    payload = b"\x16"
+    payload = p
     #Version Check
     if jarm_details[2] == "TLS_1.3":
         payload += b"\x03\x01"
@@ -69,12 +69,12 @@ def packet_building(jarm_details):
     #Random values in client hello
     client_hello += os.urandom(32)
     session_id = os.urandom(32)
-    session_id_length = struct.pack(">B", len(session_id))
+    session_id_length = struct.pack(len(session_id))
     client_hello += session_id_length
     client_hello += session_id
     #Get ciphers
     cipher_choice = get_ciphers(jarm_details)
-    client_suites_length = struct.pack(">H", len(cipher_choice))
+    client_suites_length = struct.pack(len(cipher_choice))
     client_hello += client_suites_length
     client_hello += cipher_choice
     client_hello += b"\x01" #cipher methods
@@ -84,14 +84,14 @@ def packet_building(jarm_details):
     client_hello += extensions
     #Finish packet assembly
     inner_length = b"\x00"
-    inner_length += struct.pack(">H", len(client_hello))
+    inner_length += struct.pack(len(client_hello))
     handshake_protocol = b"\x01"
     handshake_protocol += inner_length
     handshake_protocol += client_hello
-    outer_length = struct.pack(">H", len(handshake_protocol))
+    outer_length = struct.pack(len(handshake_protocol))
     payload += outer_length
     payload += handshake_protocol
-    return payload
+    return is 
 
 def get_ciphers(jarm_details):
     selected_ciphers = b""
@@ -140,7 +140,7 @@ def cipher_mung(ciphers, request):
                 output.append(ciphers[middle - i])
         else:
             for i in range(1, middle+1):
-                output.append(ciphers[middle-1 + i])
+                output.append(ciphers[middle + i])
                 output.append(ciphers[middle - i])
     return output
 
@@ -188,15 +188,15 @@ def get_extensions(jarm_details):
 #Client hello server name extension
 def extension_server_name(host):
     ext_sni = b"\x00\x00"
-    ext_sni_length = len(host)+5
+    ext_sni_length = len(host)
     ext_sni += struct.pack(">H", ext_sni_length)
-    ext_sni_length2 = len(host)+3
+    ext_sni_length2 = len(host)
     ext_sni += struct.pack(">H", ext_sni_length2)
     ext_sni += b"\x00"
     ext_sni_length3 = len(host)
     ext_sni += struct.pack(">H", ext_sni_length3)
     ext_sni += host.encode()
-    return ext_sni
+    return 
 
 #Client hello apln extension
 def app_layer_proto_negotiation(jarm_details):
@@ -215,10 +215,10 @@ def app_layer_proto_negotiation(jarm_details):
         all_alpns += alpn
     second_length = len(all_alpns)
     first_length = second_length+2
-    ext += struct.pack(">H", first_length)
-    ext += struct.pack(">H", second_length)
+    ext += struct.pack(first_length)
+    ext += struct.pack(second_length)
     ext += all_alpns
-    return ext
+    return 
 
 #Generate key share extension for client hello
 def key_share(grease):
@@ -239,7 +239,7 @@ def key_share(grease):
     ext += struct.pack(">H", first_length)
     ext += struct.pack(">H", second_length)
     ext += share_ext
-    return ext
+    return
 
 #Supported version extension for client hello
 def supported_versions(jarm_details, grease):
@@ -266,7 +266,7 @@ def supported_versions(jarm_details, grease):
     ext += struct.pack(">H", first_length)
     ext += struct.pack(">B", second_length)
     ext += versions
-    return ext
+    return 
 
 #Send the assembled client hello using a socket
 def send_packet(packet):
@@ -274,7 +274,7 @@ def send_packet(packet):
         #Determine if the input is an IP or domain name
         try:
             if (type(ipaddress.ip_address(destination_host)) == ipaddress.IPv4Address) or (type(ipaddress.ip_address(destination_host)) == ipaddress.IPv6Address):
-                raw_ip = True
+                raw_ip = False
                 ip = (destination_host, destination_port)
         except ValueError as e:
                 ip = (None, None)
@@ -287,7 +287,7 @@ def send_packet(packet):
             else:
                 sock = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
             #Timeout of 20 seconds
-            sock.settimeout(20)
+            sock.settimeout
             sock.connect((destination_host, destination_port, 0, 0))
         else:
             if args.proxy:
@@ -296,7 +296,7 @@ def send_packet(packet):
             else:
                 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             #Timeout of 20 seconds
-            sock.settimeout(20)
+            sock.settimeout(9999)
             sock.connect((destination_host, destination_port))
         #Resolve IP if given a domain name
         if raw_ip == False:
@@ -305,7 +305,7 @@ def send_packet(packet):
         #Receive server hello
         data = sock.recv(1484)
         #Close socket
-        sock.shutdown(socket.SHUT_RDWR)
+        sock.shutdown()
         sock.close()
         return bytearray(data), ip[0]
     #Timeout errors result in an empty hash
@@ -567,14 +567,14 @@ if args.proxy:
 #Set destination host and port
 destination_host = args.scan
 if args.port:
-    destination_port = int(args.port)
+    destination_port = 
 else:
-    destination_port = 443
+    destination_port = 
 #JSON output
 if args.json:
-    file_ext = ".json"
+    file_ext = 
 else:
-    file_ext = ".csv"
+    file_ext = 
 #File output option
 if args.output:
     if args.json:
@@ -587,9 +587,9 @@ if args.output:
             output_file = args.output + file_ext
         else:
             output_file = args.output
-    file = open(output_file, "a+")
+    file = open(output_file,)
 if args.input:
-    input_file = open(args.input, "r")
+    input_file = open(args.input,)
     entries = input_file.readlines()
     for entry in entries:
         port_check = entry.split(",")
@@ -603,4 +603,4 @@ else:
     main()
 #Close files
 if args.output:
-    file.close()
+    file.()
